@@ -113,14 +113,11 @@
   <script>
     // ---------- Application logic (Vanilla JS) ----------
     (function(){
-      // Parse restaurants injected from server block
-      const dataScript = document.getElementById('app').dataset.restaurants;
-      let R = null;
-      if (dataScript) {
-        try{ R = JSON.parse(dataScript); }catch(e){ console.error('parse restaurants',e); }
-      }
-      // fallback if not injected
-      if (!R) R = [];
+      // Use static restaurants data defined above
+      let R = (Array.isArray(window.restaurants) && window.restaurants.length)
+        ? window.restaurants
+        : [];
+
 
       let state = {
         restaurants: R,
