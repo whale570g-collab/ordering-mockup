@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>餐廳點餐 Mockup — 靜態單檔</title>
+  <style>
+    /* 基本 reset & layout */
+    :root{--teal:#0d9488;--bg:#f3f4f6;--muted:#6b7280}
+    *{box-sizing:border-box}
+    html,body,#app{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans CJK TC',"Helvetica Neue",Arial;padding:0;background:var(--bg);color:#111}
+    .app{min-height:100vh;display:flex}
+
+    /* 側邊餐廳列表 */
+    .side{width:220px;background:#fff;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:none}
+    @media(min-width:768px){.side{display:block}}
+    .restaurant-item{padding:8px;border-radius:8px;cursor:pointer}
+    .restaurant-item:hover{background:#f8fafc}
+    .restaurant-item.active{background:#eef2f2}
+
+    /* 主區塊 */
+    .main{flex:1;padding:24px}
+    .grid{display:grid;gap:16px}
+    .grid.cols-3{grid-template-columns:repeat(1,1fr)}
+    @media(min-width:768px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+    .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .card .cover{height:160px;background:#e6e6e6;display:flex;align-items:center;justify-content:center;color:#777}
+    .card .body{padding:12px;font-weight:600}
+
+    /* 菜單與項目 */
+    .menu-section{margin-bottom:18px}
+    .menu-item{background:#fff;padding:12px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+    .menu-item .meta{display:flex;flex-direction:column}
+    .btn{border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn-teal{background:var(--teal);color:white}
+    .btn-gray{background:#9ca3af;color:white}
+
+    /* 側邊購物車按鈕（右下） */
+    .cart-toggle{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;align-items:center;gap:12px;background:var(--teal);color:#fff;padding:10px 14px;border-radius:999px;box-shadow:0 10px 30px rgba(2,6,23,.2);cursor:pointer}
+    .cart-toggle .pill{background:#fff;color:var(--teal);padding:4px 8px;border-radius:999px;font-weight:700}
+
+    /* 側欄購物車 */
+    .cart-panel{position:fixed;right:0;top:0;height:100%;width:360px;background:#fff;box-shadow:-8px 0 30px rgba(2,6,23,.12);z-index:70;padding:18px;transform:translateX(100%);transition:transform .28s ease}
+    .cart-panel.open{transform:translateX(0)}
+    .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .cart-items{max-height:60vh;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:6px}
+    .cart-row{background:#f8fafc;padding:10px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* footer actions */
+    .cart-actions{margin-top:12px;display:flex;gap:8px}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    <aside class="side">
+      <h3 style="margin:0 0 12px 0">所有餐廳</h3>
+      <div id="restaurantList"></div>
+    </aside>
+
+    <main class="main">
+      <div id="mainContent"></div>
+    </main>
+
+    <!-- cart toggle + badge -->
+    <div id="cartToggle" class="cart-toggle" title="購物車">
+      <div style="font-weight:700">購物車</div>
+      <div id="cartCount" class="pill">0</div>
+      <div id="cartTotal" class="small">$0</div>
+    </div>
+
+    <!-- cart side panel -->
+    <aside id="cartPanel" class="cart-panel" aria-hidden="true">
+      <div class="cart-header">
+        <h3 style="margin:0">已點餐項目</h3>
+        <button id="closeCart" class="btn">關閉</button>
+      </div>
+      <div id="cartItems" class="cart-items"></div>
+      <div id="cartSummary" style="margin-top:12px">
+        <div class="small muted">總金額</div>
+        <div id="cartTotalBig" style="font-weight:700;font-size:18px;margin-top:6px">$0</div>
+        <div class="cart-actions">
+          <button id="submitBtn" class="btn btn-teal" style="flex:1">送出訂單</button>
+          <button id="clearBtn" class="btn btn-gray" style="flex:1">清空</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // ------------- data (converted from your React code) -------------
+    const restaurants = [
+  {
+    "id": 1,
+    "name": "阿芳魯肉飯",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "魯肉飯 - 大 + 半熟荷包蛋", "price": 65 },
+      { "id": 2, "name": "雞肉飯 - 小 + 半熟荷包蛋", "price": 60 },
+      { "id": 3, "name": "貢丸湯", "price": 35 },
+      { "id": 4, "name": "魚丸湯", "price": 35 },
+      { "id": 5, "name": "綜合丸湯", "price": 45 },
+      { "id": 6, "name": "蘿蔔貢丸湯", "price": 45 },
+      { "id": 7, "name": "蘿蔔魚丸湯", "price": 45 },
+      { "id": 8, "name": "燙青菜", "price": 40 },
+      { "id": 9, "name": "白菜魯", "price": 40 }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "一私麵宅 (內壢後站)",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "雙醬拌麵，小", "price": 55 },
+      { "id": 2, "name": "辛辣拌麵，小", "price": 60 },
+      { "id": 3, "name": "一私餛飩湯", "price": 55 },
+      { "id": 4, "name": "滷過的蛋", "price": 20 },
+      { "id": 5, "name": "滷過的蛋兩顆", "price": 35 }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "一劉麵館",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "牛肉麵", "price": 145 },
+      { "id": 2, "name": "50元滷味", "price": 50 },
+      { "id": 3, "name": "牛肉麵 (白麵)", "price": 145 },
+      { "id": 4, "name": "牛肉麵 (麵疙瘩)", "price": 145 },
+      { "id": 5, "name": "牛肉麵 (泡飯)", "price": 145 },
+      { "id": 6, "name": "一劉乾麵(辣)", "price": 80 },
+      { "id": 7, "name": "乾麵 (黃麵)", "price": 70 },
+      { "id": 8, "name": "乾麵 (白麵)", "price": 70 },
+      { "id": 9, "name": "乾麵 (米粉)", "price": 70 },
+      { "id": 10, "name": "乾麵 (粄條)", "price": 70 }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "麻辣桑義",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "麻辣肉燥飯", "price": 65 },
+      { "id": 2, "name": "麻辣臭豆腐+米血", "price": 90, "note": "辣椒另包" }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "八方雲集",
+    "img": "",
+    "menu": [
+      {
+        "category": "鍋貼",
+        "items": [
+          { "id": 1, "name": "招牌鍋貼", "price": 7 },
+          { "id": 2, "name": "韭菜鍋貼", "price": 7 },
+          { "id": 3, "name": "辣味鍋貼", "price": 7 },
+          { "id": 4, "name": "咖哩鍋貼", "price": 7 }
+        ]
+      },
+      {
+        "category": "水餃",
+        "items": [
+          { "id": 5, "name": "招牌水餃", "price": 7 },
+          { "id": 6, "name": "韭菜水餃", "price": 7 },
+          { "id": 7, "name": "辣味水餃", "price": 7 },
+          { "id": 8, "name": "咖哩水餃", "price": 7 }
+        ]
+      },
+      {
+        "category": "湯品",
+        "items": [
+          { "id": 9, "name": "酸辣湯", "price": 35 },
+          { "id": 10, "name": "玉米濃湯", "price": 35 },
+          { "id": 11, "name": "蕈菇湯", "price": 35 }
+        ]
+      },
+      {
+        "category": "麵點",
+        "items": [
+          { "id": 12, "name": "紹辣乾麵", "price": 60 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "滷匠先生",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "招牌蜀川麻辣湯銷魂鴨血牛肉麵", "price": 160 },
+      { "id": 2, "name": "銷魂牛肉麵", "price": 150 },
+      { "id": 3, "name": "小肥牛鴨血煲+冬粉，小辣", "price": 125 },
+      { "id": 4, "name": "梅花豬鴨血煲", "price": 115 },
+      { "id": 5, "name": "黃金豬排鴨血煲", "price": 120 },
+      { "id": 6, "name": "健康蔬食豆腐麵", "price": 110 }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "哭鼻子酸辣粉",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "酸辣粉 - 原味", "price": 100 },
+      { "id": 2, "name": "酸辣粉 - 肥腸", "price": 140 },
+      { "id": 3, "name": "酸辣粉 - 牛肉", "price": 150 },
+      { "id": 4, "name": "酸辣粉 - 綜合", "price": 180 },
+      { "id": 5, "name": "酸辣拉麵 - 原味", "price": 100 },
+      { "id": 6, "name": "酸辣拉麵 - 肥腸", "price": 140 },
+      { "id": 7, "name": "酸辣拉麵 - 牛肉", "price": 150 },
+      { "id": 8, "name": "酸辣拉麵 - 綜合", "price": 180 },
+      { "id": 9, "name": "重慶小麵 - 原味", "price": 90 },
+      { "id": 10, "name": "重慶小麵 - 肥腸", "price": 130 },
+      { "id": 11, "name": "重慶小麵 - 牛肉", "price": 150 },
+      { "id": 12, "name": "重慶小麵 - 綜合", "price": 160 },
+      { "id": 13, "name": "乾拌椒麻麵", "price": 80 },
+      { "id": 14, "name": "紅油抄手", "price": 80 },
+      { "id": 15, "name": "麻辣酸辣湯", "price": 40 }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "豚將",
+    "img": "",
+    "menu": [
+      { "id": 1, "name": "招牌豚骨拉麵", "price": 115 },
+      { "id": 2, "name": "地獄拉麵", "price": 125 },
+      { "id": 3, "name": "辣肉味噌拉麵", "price": 125 },
+      { "id": 4, "name": "柚香鹽味拉麵", "price": 99 },
+      { "id": 5, "name": "甜不辣", "price": 50 }
+    ]
+  }
+];
+
+    // We'll replace the placeholder string with the actual JSON below via code generation step.
+  </script>
+
+  <script>
+    // For safety, inject actual restaurants data as JSON to avoid escaping issues
+  </script>
+
+  <script>
+    // ---------- Application logic (Vanilla JS) ----------
+    (function(){
+      // Parse restaurants injected from server block
+      const dataScript = document.getElementById('app').dataset.restaurants;
+      let R = null;
+      if (dataScript) {
+        try{ R = JSON.parse(dataScript); }catch(e){ console.error('parse restaurants',e); }
+      }
+      // fallback if not injected
+      if (!R) R = [];
+
+      let state = {
+        restaurants: R,
+        selected: null,
+        order: [] // { restaurant, id, name, price, qty }
+      };
+
+      // --- helpers ---
+      function formatPrice(n){ return '$' + n; }
+      function findRestaurantById(id){ return state.restaurants.find(r=>r.id===id); }
+
+      // --- render restaurant list ---
+      const restaurantListEl = document.getElementById('restaurantList');
+      function renderRestaurantList(){
+        restaurantListEl.innerHTML = '';
+        state.restaurants.forEach(r=>{
+          const d = document.createElement('div');
+          d.className = 'restaurant-item' + (state.selected && state.selected.id===r.id ? ' active' : '');
+          d.textContent = r.name;
+          d.onclick = ()=>{
+            state.selected = r; renderMain(); renderRestaurantList();
+          };
+          restaurantListEl.appendChild(d);
+        });
+      }
+
+      // --- main content (restaurants grid or menu) ---
+      const mainContent = document.getElementById('mainContent');
+      function renderMain(){
+        if (!state.selected){
+          // show grid
+          const container = document.createElement('div');
+          const h = document.createElement('h1'); h.textContent='選擇一家餐廳開始點餐'; h.style.margin='0 0 12px 0'; h.style.fontSize='20px'; container.appendChild(h);
+          const grid = document.createElement('div'); grid.className='grid cols-3';
+          state.restaurants.forEach(r=>{
+            const card = document.createElement('div'); card.className='card';
+            const cover = document.createElement('div'); cover.className='cover'; cover.textContent='封面';
+            const body = document.createElement('div'); body.className='body'; body.textContent = r.name;
+            card.appendChild(cover); card.appendChild(body);
+            card.onclick = ()=>{ state.selected = r; renderMain(); renderRestaurantList(); };
+            grid.appendChild(card);
+          });
+          container.appendChild(grid);
+          mainContent.innerHTML = ''; mainContent.appendChild(container);
+        } else {
+          // show selected restaurant menu
+          const container = document.createElement('div');
+          const backBtn = document.createElement('button'); backBtn.className='btn'; backBtn.textContent='← 返回餐廳列表'; backBtn.style.margin='0 0 12px 0'; backBtn.onclick = ()=>{ state.selected = null; renderMain(); renderRestaurantList(); };
+          container.appendChild(backBtn);
+
+          const title = document.createElement('h1'); title.textContent = state.selected.name; title.style.margin='8px 0 12px 0'; title.style.fontSize='20px'; container.appendChild(title);
+
+          // menu rendering: support categorized or flat
+          if (Array.isArray(state.selected.menu) && state.selected.menu[0] && state.selected.menu[0].category){
+            state.selected.menu.forEach(cat => {
+              const sec = document.createElement('div'); sec.className='menu-section';
+              const h2 = document.createElement('h2'); h2.textContent = cat.category; h2.style.margin='0 0 8px 0'; h2.style.fontSize='16px'; sec.appendChild(h2);
+              const grid = document.createElement('div'); grid.className='grid'; grid.style.gridTemplateColumns='repeat(1,1fr)';
+              cat.items.forEach(it => {
+                const item = document.createElement('div'); item.className='menu-item';
+                const meta = document.createElement('div'); meta.className='meta';
+                const name = document.createElement('div'); name.textContent = it.name; name.style.fontWeight='700';
+                const price = document.createElement('div'); price.textContent = formatPrice(it.price); price.className='small';
+                meta.appendChild(name); meta.appendChild(price);
+                const btn = document.createElement('button'); btn.className='btn btn-teal'; btn.textContent='加入';
+                btn.onclick = ()=>{ addToOrder({ ...it, restaurant: state.selected.name }); };
+                item.appendChild(meta); item.appendChild(btn);
+                grid.appendChild(item);
+              });
+              sec.appendChild(grid); container.appendChild(sec);
+            });
+          } else {
+            const grid = document.createElement('div'); grid.className='grid'; grid.style.gridTemplateColumns='repeat(1,1fr)';
+            state.selected.menu.forEach(it=>{
+              const item = document.createElement('div'); item.className='menu-item';
+              const meta = document.createElement('div'); meta.className='meta';
+              const name = document.createElement('div'); name.textContent=it.name; name.style.fontWeight='700';
+              const price = document.createElement('div'); price.textContent = formatPrice(it.price); price.className='small';
+              meta.appendChild(name); meta.appendChild(price);
+              const btn = document.createElement('button'); btn.className='btn btn-teal'; btn.textContent='加入';
+              btn.onclick = ()=>{ addToOrder({ ...it, restaurant: state.selected.name }); };
+              item.appendChild(meta); item.appendChild(btn);
+              grid.appendChild(item);
+            });
+            container.appendChild(grid);
+          }
+
+          mainContent.innerHTML=''; mainContent.appendChild(container);
+        }
+      }
+
+      // --- order logic ---
+      function addToOrder(item){
+        const idx = state.order.findIndex(p=>p.restaurant===item.restaurant && p.name===item.name);
+        if (idx!==-1){ state.order[idx].qty = (state.order[idx].qty||0)+1; }
+        else { state.order.push({restaurant:item.restaurant,id:item.id,name:item.name,price:item.price,qty:1}); }
+        renderCartToggle(); renderCartPanel();
+      }
+
+      function updateQty(index, delta){
+        if (index<0 || index>=state.order.length) return;
+        state.order[index].qty = (state.order[index].qty||0) + delta;
+        if (state.order[index].qty<=0) state.order.splice(index,1);
+        renderCartToggle(); renderCartPanel();
+      }
+
+      function clearAll(){ state.order = []; renderCartToggle(); renderCartPanel(); }
+
+      function submitOrder(){ alert('已送出訂單，總金額：' + getTotal()); state.order = []; renderCartToggle(); renderCartPanel(); }
+
+      function getTotal(){ return state.order.reduce((s,it)=>s + (it.price||0)*(it.qty||0),0); }
+      function getItemCount(){ return state.order.reduce((s,it)=>s + (it.qty||0),0); }
+
+      // --- cart UI ---
+      const cartToggle = document.getElementById('cartToggle');
+      const cartCount = document.getElementById('cartCount');
+      const cartTotal = document.getElementById('cartTotal');
+      const cartPanel = document.getElementById('cartPanel');
+      const cartItemsEl = document.getElementById('cartItems');
+      const cartTotalBig = document.getElementById('cartTotalBig');
+      const submitBtn = document.getElementById('submitBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const closeCart = document.getElementById('closeCart');
+
+      function renderCartToggle(){ cartCount.textContent = getItemCount(); cartTotal.textContent = formatPrice(getTotal()); }
+
+      function renderCartPanel(){
+        cartItemsEl.innerHTML = '';
+        if (state.order.length===0){ cartItemsEl.innerHTML = '<div class="small muted">購物車是空的</div>'; }
+        else{
+          state.order.forEach((o,i)=>{
+            const row = document.createElement('div'); row.className='cart-row';
+            const left = document.createElement('div');
+            const name = document.createElement('div'); name.textContent = o.name; name.style.fontWeight='600';
+            const shop = document.createElement('div'); shop.textContent = o.restaurant; shop.className='small muted';
+            left.appendChild(name); left.appendChild(shop);
+            const right = document.createElement('div');
+            const qty = document.createElement('div'); qty.textContent = `$${o.price} × ${o.qty}`;
+            const controls = document.createElement('div'); controls.style.marginTop='8px';
+            const minus = document.createElement('button'); minus.className='btn'; minus.textContent='-'; minus.onclick = ()=>{ updateQty(i,-1); };
+            const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+'; plus.style.marginLeft='6px'; plus.onclick = ()=>{ updateQty(i,1); };
+            const del = document.createElement('button'); del.className='btn'; del.textContent='刪除'; del.style.marginLeft='8px'; del.onclick = ()=>{ state.order.splice(i,1); renderCartToggle(); renderCartPanel(); };
+            controls.appendChild(minus); controls.appendChild(plus); controls.appendChild(del);
+            right.appendChild(qty); right.appendChild(controls);
+            row.appendChild(left); row.appendChild(right);
+            cartItemsEl.appendChild(row);
+          });
+        }
+        cartTotalBig.textContent = formatPrice(getTotal());
+      }
+
+      // --- events ---
+      cartToggle.onclick = ()=>{ cartPanel.classList.toggle('open'); cartPanel.setAttribute('aria-hidden', cartPanel.classList.contains('open')? 'false':'true'); };
+      closeCart.onclick = ()=>{ cartPanel.classList.remove('open'); cartPanel.setAttribute('aria-hidden','true'); };
+      submitBtn.onclick = ()=>{ submitOrder(); };
+      clearBtn.onclick = ()=>{ clearAll(); };
+
+      // initial render
+      renderRestaurantList(); renderMain(); renderCartToggle(); renderCartPanel();
+
+      // expose for debugging
+      window.__mockupState = state;
+
+    })();
+  </script>
+
+  <script>
+    // Inject restaurants data as JSON into #app dataset to avoid escaping issues in the code editor
+    (function(){
+      try{
+        document.getElementById('app').dataset.restaurants = JSON.stringify(restaurants);
+      }catch(e){ console.error(e); }
+    })();
+  </script>
+</body>
+</html>
