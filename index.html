@@ -90,151 +90,20 @@
   </div>
 
   <script>
-    // ------------- data (converted from your React code) -------------
+    // ------------- data (static JSON for GitHub Pages) -------------
     const restaurants = [
-  {
-    "id": 1,
-    "name": "阿芳魯肉飯",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "魯肉飯 - 大 + 半熟荷包蛋", "price": 65 },
-      { "id": 2, "name": "雞肉飯 - 小 + 半熟荷包蛋", "price": 60 },
-      { "id": 3, "name": "貢丸湯", "price": 35 },
-      { "id": 4, "name": "魚丸湯", "price": 35 },
-      { "id": 5, "name": "綜合丸湯", "price": 45 },
-      { "id": 6, "name": "蘿蔔貢丸湯", "price": 45 },
-      { "id": 7, "name": "蘿蔔魚丸湯", "price": 45 },
-      { "id": 8, "name": "燙青菜", "price": 40 },
-      { "id": 9, "name": "白菜魯", "price": 40 }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "一私麵宅 (內壢後站)",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "雙醬拌麵，小", "price": 55 },
-      { "id": 2, "name": "辛辣拌麵，小", "price": 60 },
-      { "id": 3, "name": "一私餛飩湯", "price": 55 },
-      { "id": 4, "name": "滷過的蛋", "price": 20 },
-      { "id": 5, "name": "滷過的蛋兩顆", "price": 35 }
-    ]
-  },
-  {
-    "id": 3,
-    "name": "一劉麵館",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "牛肉麵", "price": 145 },
-      { "id": 2, "name": "50元滷味", "price": 50 },
-      { "id": 3, "name": "牛肉麵 (白麵)", "price": 145 },
-      { "id": 4, "name": "牛肉麵 (麵疙瘩)", "price": 145 },
-      { "id": 5, "name": "牛肉麵 (泡飯)", "price": 145 },
-      { "id": 6, "name": "一劉乾麵(辣)", "price": 80 },
-      { "id": 7, "name": "乾麵 (黃麵)", "price": 70 },
-      { "id": 8, "name": "乾麵 (白麵)", "price": 70 },
-      { "id": 9, "name": "乾麵 (米粉)", "price": 70 },
-      { "id": 10, "name": "乾麵 (粄條)", "price": 70 }
-    ]
-  },
-  {
-    "id": 4,
-    "name": "麻辣桑義",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "麻辣肉燥飯", "price": 65 },
-      { "id": 2, "name": "麻辣臭豆腐+米血", "price": 90, "note": "辣椒另包" }
-    ]
-  },
-  {
-    "id": 5,
-    "name": "八方雲集",
-    "img": "",
-    "menu": [
       {
-        "category": "鍋貼",
-        "items": [
-          { "id": 1, "name": "招牌鍋貼", "price": 7 },
-          { "id": 2, "name": "韭菜鍋貼", "price": 7 },
-          { "id": 3, "name": "辣味鍋貼", "price": 7 },
-          { "id": 4, "name": "咖哩鍋貼", "price": 7 }
-        ]
-      },
-      {
-        "category": "水餃",
-        "items": [
-          { "id": 5, "name": "招牌水餃", "price": 7 },
-          { "id": 6, "name": "韭菜水餃", "price": 7 },
-          { "id": 7, "name": "辣味水餃", "price": 7 },
-          { "id": 8, "name": "咖哩水餃", "price": 7 }
-        ]
-      },
-      {
-        "category": "湯品",
-        "items": [
-          { "id": 9, "name": "酸辣湯", "price": 35 },
-          { "id": 10, "name": "玉米濃湯", "price": 35 },
-          { "id": 11, "name": "蕈菇湯", "price": 35 }
-        ]
-      },
-      {
-        "category": "麵點",
-        "items": [
-          { "id": 12, "name": "紹辣乾麵", "price": 60 }
+        "id": 1,
+        "name": "阿芳魯肉飯",
+        "img": "",
+        "menu": [
+          { "id": 1, "name": "魯肉飯 - 大 + 半熟荷包蛋", "price": 65 },
+          { "id": 2, "name": "雞肉飯 - 小 + 半熟荷包蛋", "price": 60 },
+          { "id": 3, "name": "貢丸湯", "price": 35 },
+          { "id": 4, "name": "魚丸湯", "price": 35 }
         ]
       }
-    ]
-  },
-  {
-    "id": 6,
-    "name": "滷匠先生",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "招牌蜀川麻辣湯銷魂鴨血牛肉麵", "price": 160 },
-      { "id": 2, "name": "銷魂牛肉麵", "price": 150 },
-      { "id": 3, "name": "小肥牛鴨血煲+冬粉，小辣", "price": 125 },
-      { "id": 4, "name": "梅花豬鴨血煲", "price": 115 },
-      { "id": 5, "name": "黃金豬排鴨血煲", "price": 120 },
-      { "id": 6, "name": "健康蔬食豆腐麵", "price": 110 }
-    ]
-  },
-  {
-    "id": 7,
-    "name": "哭鼻子酸辣粉",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "酸辣粉 - 原味", "price": 100 },
-      { "id": 2, "name": "酸辣粉 - 肥腸", "price": 140 },
-      { "id": 3, "name": "酸辣粉 - 牛肉", "price": 150 },
-      { "id": 4, "name": "酸辣粉 - 綜合", "price": 180 },
-      { "id": 5, "name": "酸辣拉麵 - 原味", "price": 100 },
-      { "id": 6, "name": "酸辣拉麵 - 肥腸", "price": 140 },
-      { "id": 7, "name": "酸辣拉麵 - 牛肉", "price": 150 },
-      { "id": 8, "name": "酸辣拉麵 - 綜合", "price": 180 },
-      { "id": 9, "name": "重慶小麵 - 原味", "price": 90 },
-      { "id": 10, "name": "重慶小麵 - 肥腸", "price": 130 },
-      { "id": 11, "name": "重慶小麵 - 牛肉", "price": 150 },
-      { "id": 12, "name": "重慶小麵 - 綜合", "price": 160 },
-      { "id": 13, "name": "乾拌椒麻麵", "price": 80 },
-      { "id": 14, "name": "紅油抄手", "price": 80 },
-      { "id": 15, "name": "麻辣酸辣湯", "price": 40 }
-    ]
-  },
-  {
-    "id": 8,
-    "name": "豚將",
-    "img": "",
-    "menu": [
-      { "id": 1, "name": "招牌豚骨拉麵", "price": 115 },
-      { "id": 2, "name": "地獄拉麵", "price": 125 },
-      { "id": 3, "name": "辣肉味噌拉麵", "price": 125 },
-      { "id": 4, "name": "柚香鹽味拉麵", "price": 99 },
-      { "id": 5, "name": "甜不辣", "price": 50 }
-    ]
-  }
-];
-
-    // We'll replace the placeholder string with the actual JSON below via code generation step.
+    ];
   </script>
 
   <script>
@@ -418,13 +287,6 @@
     })();
   </script>
 
-  <script>
-    // Inject restaurants data as JSON into #app dataset to avoid escaping issues in the code editor
-    (function(){
-      try{
-        document.getElementById('app').dataset.restaurants = JSON.stringify(restaurants);
-      }catch(e){ console.error(e); }
-    })();
-  </script>
+  
 </body>
 </html>
